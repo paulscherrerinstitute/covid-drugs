@@ -1,6 +1,7 @@
 ---
 datatable:
     order: []
+    pageLength: 25
 ---
 
 # Covid Drugs
