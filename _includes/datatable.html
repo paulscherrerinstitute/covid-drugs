@@ -1,0 +1,28 @@
+{% comment %}
+Include a data table from a csv file
+
+Parameters:
+- data: data object
+
+Page Parameters (from yml frontmatter):
+- datatable: dictionary with DataTable initialization parameters
+
+{% endcomment %}
+<table class="datatable">
+    <thead>
+        <tr>
+            {% for col in include.data[0] -%}
+                <th>{{col[0]}}</th>
+            {%- endfor %}
+        </tr>
+    </thead>
+    <tbody>
+        {% for row in include.data %}
+        <tr>
+            {% for col in row -%}
+                <td>{{col[1]}}</td>
+            {%- endfor %}
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
