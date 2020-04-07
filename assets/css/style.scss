@@ -1,0 +1,11 @@
+---
+---
+
+// Override variables first
+$header-bg-color: #FF900C;
+$header-bg-color-secondary: #322AD0;
+
+// Main theme SCSS
+@import "{{ site.theme }}";
+
+// Custom SCSS:

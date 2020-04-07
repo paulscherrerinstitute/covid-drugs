@@ -1,37 +1,28 @@
-## Welcome to GitHub Pages
+# Drug Candidates for SARS-CoV-2
 
-You can use the [editor on GitHub](https://github.com/sbliven/covid-drugs/edit/master/README.md) to maintain and preview the content for your website in Markdown files.
+This repo hosts a work-in-progress list of drug candidates for SARS-CoV-2
+(COVID-19). Most information comes from literature reviews and preprints.
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+**Drug candidates are not clinically validatec. Do not attempt to
+self-medicate based on this information.**
 
-### Markdown
+## Installation
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+Building locally requires ruby 2.5 and bundler. To install:
 
-```markdown
-Syntax highlighted code block
-
-# Header 1
-## Header 2
-### Header 3
-
-- Bulleted
-- List
-
-1. Numbered
-2. List
-
-**Bold** and _Italic_ and `Code` text
-
-[Link](url) and ![Image](src)
+```
+gem install bundler jekyll
+bundle
 ```
 
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
+To run a local webserver:
 
-### Jekyll Themes
+```
+bundle exec jekyll serve
+```
 
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/sbliven/covid-drugs/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
+## License
 
-### Support or Contact
+Site is licensed CC-0.
 
-Having trouble with Pages? Check out our [documentation](https://help.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
+If you use the data, please cite the original references.
