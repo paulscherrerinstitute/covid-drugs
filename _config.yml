@@ -1,3 +1,9 @@
 title: COVID-19 Drug Candidates
 description: List of potential drug targets relating to SARS-CoV-2 (COVID-19)
 theme: jekyll-theme-cayman
+exclude:
+  - README.md
+  - LICENSE
+  - Gemfile*
+  - packages
+  - '*.sh'

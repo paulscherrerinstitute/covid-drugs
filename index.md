@@ -6,4 +6,4 @@ datatable:
 
 # Covid Drugs
 
-{% include datatable.html data=site.data.drug_candidates %}
+{% include drug_candidates_table.html data=site.data.drug_candidates %}

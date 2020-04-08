@@ -1,0 +1,65 @@
+{% comment %}
+Table for data.site.drug_candidates.csv.
+
+Does some column-specific data munging beyond what's available with _includes/datatable.html
+
+Parameters:
+- data: data object
+
+Page Parameters (from yml frontmatter):
+- datatable: dictionary with DataTable initialization parameters
+
+{% endcomment %}
+<table class="datatable">
+    <thead>
+        <tr>
+            <th>Chemical Name</th>
+            <th>Structure</th>
+            <th>Clinical name</th>
+            <th>Clinical provider</th>
+            <th>Biochemical provider</th>
+            <th>Drug status</th>
+            <th>Identifiers</th>
+            <th>Other clinical names</th>
+            <!--th>References</th-->
+        </tr>
+    </thead>
+    <tbody>
+        {% for row in include.data %}
+        <tr>
+            <td>{{row["Compound Name"]}}</td>
+            <td>{% if row["Pubchem"] %}
+                <img class="structureThumbnail"
+                    src="https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/{{row["Pubchem"]}}/PNG"
+                    alt="Structure of {{row["Compound Name"]}}"
+                />
+            {% endif -%}
+            </td>
+            <td>{% if row["Clinical name"] and row["Clinical name"] != "-" -%}
+                {{row["Clinical name"]}}
+            {%- else -%}
+                {{row["Compound Name"]}}
+            {%- endif -%}</td>
+            <td>{{row["Clinical provider"]}}</td>
+            <td>{% assign biochem_provider = row["Biochemical provider/ZINC/pubchem"] %}<!-- {{row["Biochemical provider"]}} -->
+                {%- if biochem_provider contains "zinc.docking.org" -%}
+                    <a href="{{biochem_provider}}">ZINC Vendors</a>
+                {%- elsif biochem_provider %-}
+                    provider:{{biochem_provider}}
+                {%- else -%}
+                    <a href="https://pubchem.ncbi.nlm.nih.gov/compound/{{row["Pubchem"]}}#section=Chemical-Vendors">Pubchem Vendors</a>
+                {%- endif -%}
+            </td>
+            <td>{{row["Drug Status"]}}</td>
+            <td>{% if row["Pubchem"] %}
+                <a href="https://pubchem.ncbi.nlm.nih.gov/compound/{{row["Pubchem"]}}">{{row["Pubchem"]}}</a>
+            {%- endif %}
+            </td>
+            <td>{{row["Other clinical names"]}}</td>
+            <!--td>References</td-->
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<pre>{{include.data[0]|inspect}}</pre>
