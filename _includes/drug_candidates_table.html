@@ -30,7 +30,7 @@ Page Parameters (from yml frontmatter):
             <td>{{row["Compound Name"]}}</td>
             <td>{% if row["Pubchem"] %}
                 <img class="structureThumbnail"
-                    src="https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/cid/{{row["Pubchem"]}}/PNG"
+                    src="https://pubchem.ncbi.nlm.nih.gov/image/imgsrv.fcgi?cid={{row["Pubchem"]}}"
                     alt="Structure of {{row["Compound Name"]}}"
                 />
             {% endif -%}
