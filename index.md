@@ -1,12 +1,12 @@
 ---
 datatable:
-    order: []
+    order: [[4, 'asc']]
     pageLength: 25
 ---
 
 This list includes drugs that may bind or otherwise interact with SARS-CoV-2.
 It has been compiled from literature by members of the Paul Scherrer Institute.
-
+For more information, contact [Xavier Deupi](mailto:xavier.deupi@psi.ch).
 
 Drug candidates are not validated, and in many cases have not been peer reviewed.
 Needless to say, this list is for research purposes only. It is not intended to
