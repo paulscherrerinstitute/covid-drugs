@@ -17,7 +17,6 @@ Page Parameters (from yml frontmatter):
             <th>Structure</th>
             <th>Clinical name</th>
             <th>Clinical provider</th>
-            <th>Biochemical provider</th>
             <th>Drug status</th>
             <th>Identifiers</th>
             <th>Other clinical names</th>
@@ -45,10 +44,6 @@ Page Parameters (from yml frontmatter):
                 {{row["Compound Name"]}}
             {%- endif -%}</td>
             <td>{{row["Clinical provider"]}}</td>
-            <td>{% assign provider = row["Biochemical provider/ZINC/pubchem"] -%}
-                {% assign pubchem = row["Pubchem"] -%}
-                {% include provider.html provider=provider pubchem=pubchem %}
-            </td>
             <td>{{row["Drug Status"]}}</td>
             <td>{% if row["Pubchem"] %}
                 <a href="https://pubchem.ncbi.nlm.nih.gov/compound/{{row["Pubchem"]}}">{{row["Pubchem"]}}</a>
