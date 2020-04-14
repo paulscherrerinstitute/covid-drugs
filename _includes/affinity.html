@@ -1,0 +1,21 @@
+{% comment %}
+Params:
+- types: comma-separated list of measurement types
+- affinities: comma-separated list of affinities
+- join: string to join result with (default ", ")
+
+Returns:
+HTML string with 'type = affinity' pairs
+{% endcomment %}
+{% assign types = include.types | split: ", " -%}
+{% assign affinities = include.affinities | split: ", " -%}
+{% assign last = affinities.size | minus: 1 -%}
+{% for i in (0..last) -%}
+    {% if i < types.size -%}
+        {% assign type = types[i] -%}
+    {% else -%}
+        {% assign type = types[0] -%}
+    {% endif -%}
+    {% include affinity_type.html type=type %} = {{affinities[i]}}
+    {%- if i < last %}{{ include.join | default: ", "}}{% endif -%}
+{% endfor -%}

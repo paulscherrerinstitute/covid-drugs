@@ -21,7 +21,11 @@ Page Parameters (from yml frontmatter):
             <th>Drug status</th>
             <th>Identifiers</th>
             <th>Other clinical names</th>
-            <!--th>References</th-->
+            <th>Affinity (nM)</th>
+            <th>Human Target</th>
+            <th>Viral Bait</th>
+            <th>Mechanism</th>
+            <th>References</th>
         </tr>
     </thead>
     <tbody>
@@ -56,7 +60,14 @@ Page Parameters (from yml frontmatter):
             {%- endif %}
             </td>
             <td>{{row["Other clinical names"]}}</td>
-            <!--td>References</td-->
+            <td>{% assign types = row["Affinity Type"] -%}
+                {% assign affinities = row["Affinity (nM)"] -%}
+                {% include affinity.html types=types affinities=affinities join="<br/>" %}
+            </td>
+            <td>{{row["Human Target"]}}</td>
+            <td>{{row["Viral Bait"]}}</td>
+            <td>{{row["Mechanism"]}}</td>
+            <td>{{row["References"]}}</td>
         </tr>
         {% endfor %}
     </tbody>

@@ -1,0 +1,12 @@
+{% comment %}
+Params:
+- type: affinity measurement type, e.g. "IC50"
+
+Returns:
+Pretty HTML formatted version of the type
+{% endcomment %}
+{%- assign type = include.type -%}
+{%- assign type = type | replace:"50", "<sub>50</sub>" -%}
+{%- assign type = type | replace:"Ki", "K<sub>i</sub>" -%}
+{%- assign type = type | replace:"KD", "K<sub>D</sub>" -%}
+{{ type }}
