@@ -1,0 +1,8 @@
+{% assign biochem_provider = include.provider %}<!-- {{row["Biochemical provider"]}} -->
+{%- if biochem_provider contains "zinc.docking.org" -%}
+    <a href="{{biochem_provider}}">ZINC Vendors</a>
+{%- elsif biochem_provider %-}
+    provider:{{biochem_provider}}
+{%- else -%}
+    <a href="https://pubchem.ncbi.nlm.nih.gov/compound/{{include.pubchem}}#section=Chemical-Vendors">Pubchem Vendors</a>
+{%- endif -%}

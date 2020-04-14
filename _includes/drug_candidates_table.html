@@ -45,14 +45,9 @@ Page Parameters (from yml frontmatter):
                 {{row["Compound Name"]}}
             {%- endif -%}</td>
             <td>{{row["Clinical provider"]}}</td>
-            <td>{% assign biochem_provider = row["Biochemical provider/ZINC/pubchem"] %}<!-- {{row["Biochemical provider"]}} -->
-                {%- if biochem_provider contains "zinc.docking.org" -%}
-                    <a href="{{biochem_provider}}">ZINC Vendors</a>
-                {%- elsif biochem_provider %-}
-                    provider:{{biochem_provider}}
-                {%- else -%}
-                    <a href="https://pubchem.ncbi.nlm.nih.gov/compound/{{row["Pubchem"]}}#section=Chemical-Vendors">Pubchem Vendors</a>
-                {%- endif -%}
+            <td>{% assign provider = row["Biochemical provider/ZINC/pubchem"] -%}
+                {% assign pubchem = row["Pubchem"] -%}
+                {% include provider.html provider=provider pubchem=pubchem %}
             </td>
             <td>{{row["Drug Status"]}}</td>
             <td>{% if row["Pubchem"] %}
