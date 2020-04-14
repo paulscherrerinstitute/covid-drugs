@@ -19,5 +19,5 @@ Params:
         {%- else -%}
             {{refs[i]}}
         {%- endif -%}
-        <span class="cite-ref citation-js" data-output-format="bibliography">{{ref}}</span></span>
+        <span class="cite-ref citation-js" data-input="{{ref}}" data-output-format="bibliography">Loading {{ref}}...</span></span>
 {% endfor %}

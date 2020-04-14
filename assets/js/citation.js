@@ -8092,7 +8092,7 @@ function getOpts(options, prefix) {
   }, {});
 }
 
-window.addEventListener('load', function () {
+function replaceCitations() {
   const inputOptions = getOpts(CONFIG, 'input');
   const pluginConfig = getOpts(CONFIG, 'plugin');
 
@@ -8136,7 +8136,9 @@ window.addEventListener('load', function () {
 
     element.insertAdjacentHTML('beforeend', output);
   });
-});
+}
+document.replaceCitations = replaceCitations;
+window.addEventListener('load', replaceCitations);
 },{"@citation-js/core":"citation-js","whatwg-fetch":123}],109:[function(require,module,exports){
 /*
 Copyright (c) 2009-2019 Frank Bennett

@@ -35,9 +35,17 @@
         integrity="sha256-pasqAKBDmFT4eHoN2ndd6lN370kFiGUFyTiUHWhU7k8=" crossorigin="anonymous"></script>
     <script src="//cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
     <script>
-        $(document).ready( function () {
-            $('.datatable').DataTable({{page.datatable| jsonify }});
-        });
+      $(document).ready(function () {
+        var table = $('.datatable').DataTable({{ page.datatable | jsonify }});
+
+        // If using the patched @citation-js/replacer then we can update refs after DOM changes
+        if(document.replaceCitations !== undefined) {
+          table.on('draw', function () {
+            console.log('Loading more citations.');
+            document.replaceCitations();
+          });
+        }
+      });
     </script>
 
     {% if site.google_analytics %}
