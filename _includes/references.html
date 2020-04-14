@@ -1,0 +1,19 @@
+{% comment %}
+Params:
+- refs: comma-separated list of reference keys
+- style: citation style: 'alpha', 'number', or 'ref' (default)
+{% endcomment -%}
+{% assign refs = include.refs | replace: ", ", "," | split: "," -%}
+{% assign last = refs.size | minus: 1 -%}
+{% assign alphabet = "abcdefghijklmnopqrstuvwxyz" | split: "" -%}
+{% for i in (0..last) -%}
+    <span class="cite-text">
+        {%- if include.style == "alpha" -%}
+            [{{alphabet[i]}}]
+        {%- elsif include=style == "number" -%}
+            [{{i|plus: 1}}]
+        {%- else -%}
+            {{refs[i]}}
+        {%- endif -%}
+        <span class="cite-ref">{{refs[i]}}</span></span>
+{% endfor %}

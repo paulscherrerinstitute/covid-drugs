@@ -57,7 +57,9 @@ Page Parameters (from yml frontmatter):
             <td>{{row["Human Target"]}}</td>
             <td>{{row["Viral Bait"]}}</td>
             <td>{{row["Mechanism"]}}</td>
-            <td>{{row["References"]}}</td>
+            <td>{% assign refs = row["References"] -%}
+                {% include references.html refs=refs -%}
+            </td>
         </tr>
         {% endfor %}
     </tbody>

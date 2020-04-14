@@ -10,6 +10,11 @@ $header-bg-color-secondary: #322AD0;
 
 // Custom SCSS:
 
+// smaller header
 .page-header {
     padding: 1rem 6rem;
 }
+
+// Citations
+@import "citations";
+

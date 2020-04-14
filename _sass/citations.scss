@@ -1,0 +1,33 @@
+/* Citation styling */
+
+
+.cite-text {
+    display: inline;
+    position: relative;
+    font-size: 80%;
+
+    .cite-ref {
+      // tooltip styling
+      border: solid 1px #cccccc;
+      background: white;
+      padding: 0.5rem;
+      margin-right: 0.5rem;
+      color: black;
+      text-decoration: none;
+
+      // Position relative to the link
+      position: absolute;
+      right: 100%;
+      top: 0;
+      // Not sure how to set width automatically
+      width: 250px;
+
+      // hide initially
+      display: none;
+    }
+
+    // Show on hover
+    &:hover .cite-ref {
+      display: block;
+    }
+  }
