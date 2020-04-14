@@ -62,6 +62,6 @@ Page,Compound Name,Clinical name,Clinical provider,Biochemical provider/ZINC/pub
 25,Chloramphenicol,,generic,https://pubchem.ncbi.nlm.nih.gov/compound/5959#section=Chemical-Vendors,Approved - bacterial infection,"Pentamycetin, Chloromycetin",10.1101/2020.03.22.002386,5959,DB00446,,,,Mitochondrial ribosome,,Mitochondrial ribosome inhibitor,7400,IC50,
 26,Tigecycline,Tygacil,Wyeth,https://pubchem.ncbi.nlm.nih.gov/compound/54686904#section=Chemical-Vendors,Approved - bacterial infection,,10.1101/2020.03.22.002386,54686904,DB00560,,,,Mitochondrial ribosome,,Mitochondrial ribosome inhibitor,3300,IC50,
 26,Linezolid,Zyvox,generic,https://pubchem.ncbi.nlm.nih.gov/compound/441401#section=Chemical-Vendors,Approved - bacterial infection,Zyvoxid,10.1101/2020.03.22.002386,441401,DB00601,,,,Mitochondrial ribosome,,Mitochondrial ribosome inhibitor,16000,IC50,
-,Human recombinant soluble ACE2,,,,,,10.1016/j.cell.2020.04.004,,,Target of the spike S protein,,,,,,,,
+,Human recombinant soluble ACE2,,,,,,https://www.cell.com/pb-assets/products/coronavirus/CELL_CELL-D-20-00739.pdf,,,Target of the spike S protein,,,,,,,,
 ,Imatinib,Gleevec,generic,https://pubchem.ncbi.nlm.nih.gov/compound/5291#section=Chemical-Vendors,Approved - cancer,Glivec,10.1128/JVI.01429-16,5291,DB00619,Abelson kinase inhibitor,,,,,,,,
 ,Ivermectin,Stromectol,generic,https://pubchem.ncbi.nlm.nih.gov/compound/6321424#section=Chemical-Vendors,Approved - parasitic infections,,10.1016/j.antiviral.2020.104787,6321424,DB00602,broad-spectrum anti-parasite drug,,,,,,,,

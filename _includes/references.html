@@ -7,6 +7,10 @@ Params:
 {% assign last = refs.size | minus: 1 -%}
 {% assign alphabet = "abcdefghijklmnopqrstuvwxyz" | split: "" -%}
 {% for i in (0..last) -%}
+    {% assign ref = refs[i] -%}
+    {% if ref contains "PMID:" -%}
+        {% assign ref = ref | downcase -%}
+    {% endif -%}
     <span class="cite-text">
         {%- if include.style == "alpha" -%}
             [{{alphabet[i]}}]
@@ -15,5 +19,5 @@ Params:
         {%- else -%}
             {{refs[i]}}
         {%- endif -%}
-        <span class="cite-ref">{{refs[i]}}</span></span>
+        <span class="cite-ref citation-js" data-output-format="bibliography">{{ref}}</span></span>
 {% endfor %}
