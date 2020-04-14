@@ -5,7 +5,11 @@
 $header-bg-color: #FF900C;
 $header-bg-color-secondary: #322AD0;
 
-// Main theme SCSS
+// Main theme SCSS (from `bundle show cayman`/_sass/jekyll-theme-cayman.scss)
 @import "{{ site.theme }}";
 
 // Custom SCSS:
+
+.page-header {
+    padding: 1rem 6rem;
+}
