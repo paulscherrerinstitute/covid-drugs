@@ -10,6 +10,19 @@ $header-bg-color-secondary: #322AD0;
 
 // Custom SCSS:
 
+.full-width {
+    width: 100vw;
+    position: relative;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+}
+
+.m-10 {
+    margin: 0 1rem;
+}
+
 // smaller header
 .page-header {
     padding: 1rem 6rem;
