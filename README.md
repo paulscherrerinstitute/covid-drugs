@@ -12,7 +12,7 @@ Currently data is drawn from a google sheet. To update the website to match the
 spreadsheet:
 
 1. Check out the repository (`git clone git@github.com:sbliven/covid-drugs.git`)
-2. Run `./update_data.sh` to download the latest version
+2. Run `scripts/update_data.sh` to download the latest version
 3. (Optional) If major changes such as renaming columns occurred, run jekyll
    locally (see below) to ensure there are no errors
 4. Commit changes:
