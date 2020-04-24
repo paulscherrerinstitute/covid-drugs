@@ -3,7 +3,7 @@
 This repo hosts a work-in-progress list of drug candidates for SARS-CoV-2
 (COVID-19). Most information comes from literature reviews and preprints.
 
-**Drug candidates are not clinically validatec. Do not attempt to
+**Drug candidates are not clinically validated. Do not attempt to
 self-medicate based on this information.**
 
 ## Updating dataset
@@ -11,7 +11,7 @@ self-medicate based on this information.**
 Currently data is drawn from a google sheet. To update the website to match the
 spreadsheet:
 
-1. Check out the repository (`git clone git@github.com:sbliven/covid-drugs.git`)
+1. Check out the repository (`git clone git@github.com:paulscherrerinstitute/covid-drugs.git`)
 2. Run `scripts/update_data.sh` to download the latest version
 3. (Optional) If major changes such as renaming columns occurred, run jekyll
    locally (see below) to ensure there are no errors

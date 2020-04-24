@@ -7,3 +7,4 @@ exclude:
   - Gemfile*
   - packages
   - '*.sh'
+  - scripts
