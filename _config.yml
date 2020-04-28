@@ -4,7 +4,8 @@ theme: jekyll-theme-cayman
 exclude:
   - README.md
   - LICENSE
-  - Gemfile*
+  - 'Gemfile*'
   - packages
   - '*.sh'
-  - scripts
+  - /scripts
+  - '*.py'
