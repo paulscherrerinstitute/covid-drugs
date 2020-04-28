@@ -1,38 +1,50 @@
----
-jupyter:
-  jupytext:
-    formats: ipynb,md
-    text_representation:
-      extension: .md
-      format_name: markdown
-      format_version: '1.2'
-      jupytext_version: 1.4.2
-  kernelspec:
-    display_name: Python [conda env:jupyter] *
-    language: python
-    name: conda-env-jupyter-py
----
+# ---
+# jupyter:
+#   jupytext:
+#     formats: py:percent
+#     text_representation:
+#       extension: .py
+#       format_name: percent
+#       format_version: '1.3'
+#       jupytext_version: 1.4.2
+#   kernelspec:
+#     display_name: Python 3
+#     language: python
+#     name: python3
+# ---
 
-# Setup
+# %% [markdown]
+# # Setup
+#
+# This is a jupyter notebook, saved in the 'py:percent' format. Make sure you have the 'jupytext' extension installed for jupyter/jupyterlab to enable editing as a traditional jupyter notebook.
+#
+# This script should be executed by jupytext:
+#
+#     jupytext -k - --execute update_data.py
+#     
+# You may have to substitute your jupyter kernel name for '-' above, depending on your setup. To see a list of valid kernels use
+#
+#     jupyter kernelspec list
+#     
+# Executing this directly with python works too, but will ignore the bash cells.
 
-```python
+# %%
 import re
 import time
-import pixiedust
 from tqdm import tqdm
 import pandas as pd
 tqdm.pandas()
 import requests
+from typing import Union, Hashable, Sequence
 pd.__version__
-```
 
-```python
+# %%
 last_pubchem = None
 def guess_cid(drug):
     """Guess a pubmed CID from a name. May return multiple."""
     global last_pubchem
     url = f"https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/{drug}/cids/TXT"
-    
+
     # Throttle requests
     requests_frequency = 1./5.
     currtime = time.time()
@@ -41,40 +53,41 @@ def guess_cid(drug):
         time.sleep(requests_frequency - (currtime - last_pubchem))
     last_pubchem = time.time()  # Count from start of request. Correct?
     result = requests.get(url)
-    
+
     if result.status_code == requests.codes.OK:
         return result.text.split()
     else:
         return []
-```
 
-```python
+
+# %%
 guess_cid("glucose")
-```
 
-```python
+# %%
 guess_cid("abcxyz")
-```
 
-```python
+
+# %%
 def split_csv(x):
     return list(filter(None, x.strip().split(r",\s*")))
-```
+def join_csv(x):
+    return ", ".join(x)
 
-# Load data
-## ReDO dataset
 
-```python
+# %% [markdown]
+# # Load data
+# ## ReDO dataset
+
+# %%
 redo_filename = "../_data/ReDO_covid19db.txt"
-```
 
-```python
+
+# %%
 # Download ReDO database
 # Remove CR characters, which appear both as CRLF line endings and at the end of some titles
-! curl -o - 'http://www.redo-project.org/wp-content/themes/twentyten/covid19db.txt' | tr -d \\r > ../_data/ReDO_covid19db.txt
-```
+# ! curl -o - 'http://www.redo-project.org/wp-content/themes/twentyten/covid19db.txt' | tr -d \\r > ../_data/ReDO_covid19db.txt
 
-```python code_folding=[0]
+# %% code_folding=[0]
 # Not needed anymore; see
 def read_csv_bytes(filename):
     """Read ReDO csv manually. Initial hack to get around inconsistent encodings."""
@@ -93,9 +106,9 @@ def read_csv_bytes(filename):
                 pass  # Error on Title column
 
         return df
-```
 
-```python
+
+# %%
 # Use latin1 encoding, since the titles have wildly different encodings
 redo = pd.read_csv(redo_filename, delimiter="\t", encoding="latin1")
 redo = redo.dropna(how='all', axis=1)
@@ -104,9 +117,9 @@ for col in ["Ctl","MA"]:
     redo[col] = redo[col].map({'Y': True, 'N': False})
 redo.reset_index(inplace=True, drop=True)
 redo.head()
-```
 
-```python
+
+# %%
 def extract_id(i):
     r = re.compile(r'<a href="([^"]*)">([^<]*)</a>')
     m = r.match(i)
@@ -118,25 +131,21 @@ def extract_id(i):
         url = m.group(1)
     return {"trial_id": ident, "trial_url": url}
 extract_id(redo.loc[0,"ID"])
-```
 
-```python
+# %%
 redo = pd.concat((redo, pd.DataFrame.from_records(redo.ID.map(extract_id))), axis=1)
 redo.head()
-```
 
-```python
+# %%
 any(pd.isnull(redo.trial_url))
-```
 
-```python
+# %%
 # Explode drugs
 redo["Drugs"] = redo.Drugs.str.split(r",\s*")
 redo = redo.explode("Drugs").reset_index(drop=True)
 redo.head()
-```
 
-```python
+# %%
 # Fix misspellings
 redo.Drugs = redo.Drugs.replace("Hydoxychloroquine","Hydroxychloroquine") \
         .replace("Ritonavir/lopinavir", "Lopinavir/ritonavir") \
@@ -147,36 +156,39 @@ redo.Drugs = redo.Drugs.replace("Hydoxychloroquine","Hydroxychloroquine") \
         .replace("Interferon Beta-1B", "Interferon beta-1b") \
         .replace("Nitric Oxide", "Nitric oxide") \
 
-```
 
-```python
+# %%
 # Filter nondrugs
 redo = redo.loc[~(redo.Drugs.isnull() | redo.Drugs.str.startswith('ND:')),:]
 redo.reset_index(inplace=True, drop=True)
 redo.head()
-```
 
-```python
+# %%
 # Check for case sensitive matches
 # If any are found, manually add them to the replace list above
 case_sensitivity = pd.DataFrame({"upper": d, "lower": d.lower()} for d in redo.Drugs.unique())
 case_sensitivity.groupby("lower").count().sort_values("upper",ascending=False).query('upper > 1')
-```
 
-```python
+# %%
 # Inspect case sensitive matches
 redo.loc[redo.Drugs.str.lower() ==
          case_sensitivity.groupby("lower").count().sort_values("upper",ascending=False).iloc[0].name,:].groupby("Drugs").count()
-```
 
-## Google spreadsheet
+# %% [markdown]
+# ## Google spreadsheet
 
-```python
+# %%
 # Load database
-candidates_filename = "../_data/drug_candidates.csv"
-```
+candidates_filename = "../_data/master.csv"
 
-```python
+# %% language="bash"
+# curl -o - 'https://docs.google.com/spreadsheets/d/11-iEHt8p66G-nlLSazuXsP-45kbS3V6Yvl1bdL6jbFI/export?format=csv' |
+#     tr -d '\r' `# remove DOS line endings` |
+#     awk -F, 'NR > 3 && NF > 1 && $2 != "" {print $0}' |
+#     perl -pe 'chomp if eof' > "../_data/master.csv"
+#
+
+# %%
 master = pd.read_csv(candidates_filename,
                               dtype={
                                   "Page": object,
@@ -192,116 +204,141 @@ master = pd.read_csv(candidates_filename,
                               })
 
 master
-```
 
-```python
+# %%
 master["Synonymns"] = master.apply(lambda row: list(set(
                           [row["Compound Name"]] \
                           + row["Clinical name"] \
                           + row["Other names"])),
                       axis=1)
 master.head()
-```
 
-```python
+# %%
 synonymns = master.explode("Synonymns")[["Compound Name","Synonymns"]]
 synonymns["Synonymns"] = synonymns["Synonymns"].str.lower()
 synonymns.head()
-```
 
 
-# Merge data
+# %% [markdown]
+# # Merge data
+#
+# - `master["Compound Name"]` is definitive
+# - `synonymns` maps other names to the Compound Name
+# - `redo` matches clinical trials to drugs
+# - `trials` is a drug-based view of `redo`
+#
+# ## Establish Mappings
 
-- `master["Compound Name"]` is definitive
-- `synonymns` maps other names to the Compound Name
-- `redo` matches clinical trials to drugs
-- `trials` is a drug-based view of `redo`
+# %%
+redo = pd.merge(redo, synonymns, how="left", left_on=redo.Drugs.str.lower(), right_on="Synonymns" )
+redo.head()
 
-```python
-merged = pd.merge(redo, synonymns, how="left", left_on=redo.Drugs.str.lower(), right_on="Synonymns" )
-merged.head()
-```
+# %% [markdown]
+# ## Writing lists of missing compounds
+#
+# - Add entries to `_data/ignored_compounds.tsv`
+# - `missing_drugs` will consist of everything in the merged dataset that's not in the master or the ignored list
 
-```python
-trials = pd.DataFrame(merged.groupby("Drugs")["ID"].apply(list))
-trials.reset_index(inplace=True, drop=False)
-trials
-```
-
-## Writing lists of missing compounds
-
-```python
+# %%
 missing_drug_filename = "../_data/missing_compounds.tsv"
 ignored_drug_filename = "../_data/ignored_compounds.tsv"
-```
 
-```python
-ignored_drugs = pd.read_csv(ignored_drug_filename)
-```
+# %%
+ignored_drugs = pd.read_csv(ignored_drug_filename, sep="\t")
+ignored_drugs.drop_duplicates("Drugs", inplace=True)
+ignored_drugs
 
-```python
-missing_drugs = merged[pd.isna(merged["Compound Name"])][["Drugs"]]
+# %%
+missing_drugs = redo[pd.isna(redo["Compound Name"])][["Drugs"]]
 missing_drugs.drop_duplicates("Drugs", inplace=True)
+missing_drugs.reset_index(inplace=True, drop=True)
 missing_drugs
-```
 
-```python
-missing_drugs = merged[pd.isna(merged["Compound Name"])][["Drugs"]]
+# %%
+# filter out ignored
+missing_drugs = missing_drugs.loc[pd.merge(
+    missing_drugs, ignored_drugs, how="left", on="Drugs",
+    indicator=True)._merge == "left_only", :]
 missing_drugs
-```
 
-```python
-missing_drugs["Pubchem"] = missing_drugs.Drugs.progress_apply(guess_cid)
+# %%
+missing_drugs = pd.concat([missing_drugs, missing_drugs["Drugs"].progress_apply(guess_cid).to_frame(name="Pubchem")], axis=1)
 missing_drugs.head()
-```
 
-```python
-missing_drugs.drop_duplicates("Drugs", inplace=True)
-missing_drugs
-```
-
-```python
+# %%
+# Write to file
 pd.concat(
     [missing_drugs.Drugs,
      missing_drugs.Pubchem.apply(lambda x: ",".join(x))],
     axis=1) \
 .sort_values("Drugs") \
 .to_csv(missing_drug_filename, sep="\t", index=False)
-```
 
-```python
-merged[pd.isna(merged["Compound Name"])][["Drugs","Type"]]
-```
+# %%
+# # Initialize ignored_drugs
+# ignored_drugs = pd.merge(
+#     missing_drugs[missing_drugs["Pubchem"].apply(len) == 0]["Drugs"],
+#     redo[["Drugs", "Type"]],
+#     how="left")\
+# .query('Type != "Drug Repurposing"')\
+# .rename(columns={"Type": "Reason"})
+# # Append to ignored list
+# ignored_drugs = append_tsv(ignored_drug_filename, ignored_drugs, unique="Drugs")
+# ignored_drugs
 
-```python
-ignored_drugs = pd.merge(
-    missing_drugs[missing_drugs["Pubchem"].apply(len) == 0]["Drugs"],
-    merged[["Drugs", "Type"]],
-    how="left")\
-.query('Type != "Drug Repurposing"')\
-.rename(columns={"Type": "Reason"})
-```
+# %% [markdown]
+# ## Join everything
 
-```python pixiedust={"displayParams": {}}
-#%%pixie_debugger
-def append_tsv(filename, data, unique=True, sep="\t"):
-    old = pd.read_csv(filename, sep=sep)
-    merged = pd.concat([old, data], axis=0)
-    if unique:
-        merged.drop_duplicates(inplace=True)
-    merged.to_csv(filename, sep=sep, index=False)
-    return merged
+# %%
+trials = pd.DataFrame(redo.groupby("Drugs")["ID"].apply(list))
+trials.reset_index(inplace=True, drop=False)
+trials
 
-ignored_drugs = append_tsv(ignored_drug_filename, ignored_drugs)
-```
+# %%
+trials["trials_html"] = trials.ID.apply(join_csv)
+trials.head()
 
-# Analysis
+# %%
+merged = pd.merge(master.reset_index(drop=True),
+                  trials.drop("ID", axis=1).reset_index(drop=True),
+                  how="left",
+                  left_on="Compound Name",
+                  right_on="Drugs"
+                 ) \
+.drop(["Page","Drugs","Synonymns"], axis=1)
+merged["Clinical name"] = merged["Clinical name"].apply(join_csv)
+merged["Other names"] = merged["Other names"].apply(join_csv)
+def update_status(row):
+    row["Drug Status"] = ", ".join( (["Covid trial"] if not pd.isna(row["trials_html"]) else []) \
+                                   + ([row["Drug Status"]] if not pd.isna(row["Drug Status"]) else []))
+    return row
+merged = merged.apply(update_status, axis=1)
+merged
 
-```python
+# %%
+
+# %% [markdown]
+# # Output
+
+# %%
+# Load database
+output_filename = "../_data/drug_candidates.tsv"
+
+# %%
+merged.to_csv(output_filename, sep="\t",index=False)
+
+# %%
+
+# %% [markdown]
+# # Analysis
+
+# %%
 # Top hits. Should match ReDo counts
-dict(merged.groupby('Drugs').Drugs.count().sort_values(ascending=False))
-```
+dict(redo.groupby('Drugs').Drugs.count().sort_values(ascending=False))
 
-```python
+# %%
 print("\n".join(redo.Type.unique()))
-```
+
+# %%
+
+# %%

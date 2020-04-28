@@ -25,6 +25,7 @@ Page Parameters (from yml frontmatter):
             <th>Human Target</th>
             <th>Viral Bait</th>
             <th>Mechanism</th>
+            <th>Covid Trials</th>
             <th>References</th>
         </tr>
     </thead>
@@ -58,6 +59,7 @@ Page Parameters (from yml frontmatter):
             <td>{{row["Human Target"]}}</td>
             <td>{{row["Viral Bait"]}}</td>
             <td>{{row["Mechanism"]}}</td>
+            <td>{{row["trials_html"]}}</td>
             <td>{% assign refs = row["References"] -%}
                 {% include references.html refs=refs -%}
             </td>
