@@ -8,7 +8,7 @@
 #       format_version: '1.3'
 #       jupytext_version: 1.4.2
 #   kernelspec:
-#     display_name: Python 3
+#     display_name: Python [conda env:covid-drugs]
 #     language: python
 #     name: python3
 # ---
@@ -29,49 +29,14 @@
 # Executing this directly with python works too, but will ignore the bash cells.
 
 # %%
+from util import guess_cid, split_csv, join_csv
+import logging
 import re
-import time
 from tqdm import tqdm
 import pandas as pd
 tqdm.pandas()
-import requests
-from typing import Union, Hashable, Sequence
 pd.__version__
 
-# %%
-last_pubchem = None
-def guess_cid(drug):
-    """Guess a pubmed CID from a name. May return multiple."""
-    global last_pubchem
-    url = f"https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/{drug}/cids/TXT"
-
-    # Throttle requests
-    requests_frequency = 1./5.
-    currtime = time.time()
-    if last_pubchem is not None and currtime - last_pubchem < requests_frequency:
-        print(f"Sleeping {requests_frequency - (currtime - last_pubchem)}")
-        time.sleep(requests_frequency - (currtime - last_pubchem))
-    last_pubchem = time.time()  # Count from start of request. Correct?
-    result = requests.get(url)
-
-    if result.status_code == requests.codes.OK:
-        return result.text.split()
-    else:
-        return []
-
-
-# %%
-guess_cid("glucose")
-
-# %%
-guess_cid("abcxyz")
-
-
-# %%
-def split_csv(x):
-    return list(filter(None, x.strip().split(r",\s*")))
-def join_csv(x):
-    return ", ".join(x)
 
 
 # %% [markdown]
@@ -81,36 +46,18 @@ def join_csv(x):
 # %%
 redo_filename = "../_data/ReDO_covid19db.txt"
 
-
 # %%
 # Download ReDO database
 # Remove CR characters, which appear both as CRLF line endings and at the end of some titles
 # ! curl -o - 'http://www.redo-project.org/wp-content/themes/twentyten/covid19db.txt' | tr -d \\r > ../_data/ReDO_covid19db.txt
 
-# %% code_folding=[0]
-# Not needed anymore; see
-def read_csv_bytes(filename):
-    """Read ReDO csv manually. Initial hack to get around inconsistent encodings."""
-    def decode(x):
-        if x is not None:
-            return x.decode('utf-8')
-        return x
-    with open(filename, 'rb') as csv:
-        fields = [line.strip(b'\r\n').split(b'\t') for line in csv.readlines()]
-        fields = [line for line in fields if len(line)>1]
-        df = pd.DataFrame.from_records(fields[1:], columns=[x.decode('utf-8') for x in fields[0]])
-        for column in df.columns:
-            try:
-                df[column] = df[column].map(decode)
-            except UnicodeDecodeError:
-                pass  # Error on Title column
-
-        return df
-
-
 # %%
-# Use latin1 encoding, since the titles have wildly different encodings
-redo = pd.read_csv(redo_filename, delimiter="\t", encoding="latin1")
+try:
+    redo = pd.read_csv(redo_filename, delimiter="\t", encoding="windows-1252")
+except UnicodeDecodeError as e:
+    # Fall back on latin1 encoding, which accepts everything
+    logging.warn(e)
+    redo = pd.read_csv(redo_filename, delimiter="\t", encoding="latin1")
 redo = redo.dropna(how='all', axis=1)
 # Convert boolean columns
 for col in ["Ctl","MA"]:
@@ -121,6 +68,7 @@ redo.head()
 
 # %%
 def extract_id(i):
+    """Extracts the identifier from the URL in redo's ID column"""
     r = re.compile(r'<a href="([^"]*)">([^<]*)</a>')
     m = r.match(i)
     if m is None:
@@ -133,10 +81,12 @@ def extract_id(i):
 extract_id(redo.loc[0,"ID"])
 
 # %%
+# Append trial_id and trial_url columns
 redo = pd.concat((redo, pd.DataFrame.from_records(redo.ID.map(extract_id))), axis=1)
 redo.head()
 
 # %%
+# Ensure all columns have a URL
 any(pd.isnull(redo.trial_url))
 
 # %%
@@ -152,8 +102,10 @@ redo.Drugs = redo.Drugs.replace("Hydoxychloroquine","Hydroxychloroquine") \
         .replace("Lopinavir/Ritonavir", "Lopinavir/ritonavir") \
         .replace("Interferon Beta-1A", "Interferon beta-1a") \
         .replace("Interferon beta-1A", "Interferon beta-1a") \
-        .replace("Ascorbic Acid", "Ascorbic acid") \
+        .replace("Ascorbid acid", "Ascorbic acid") \
         .replace("Interferon Beta-1B", "Interferon beta-1b") \
+        .replace("BCG Vaccine", "BCG vaccine") \
+        .replace("Chlropromazine", "Chlorpromazine") \
         .replace("Nitric Oxide", "Nitric oxide") \
 
 
@@ -172,7 +124,12 @@ case_sensitivity.groupby("lower").count().sort_values("upper",ascending=False).q
 # %%
 # Inspect case sensitive matches
 redo.loc[redo.Drugs.str.lower() ==
-         case_sensitivity.groupby("lower").count().sort_values("upper",ascending=False).iloc[0].name,:].groupby("Drugs").count()
+         case_sensitivity.groupby("lower")\
+         .count()\
+         .sort_values("upper",ascending=False)\
+         .iloc[0].name,
+         :]\
+.groupby("Drugs").count()
 
 # %% [markdown]
 # ## Google spreadsheet
@@ -315,8 +272,6 @@ def update_status(row):
 merged = merged.apply(update_status, axis=1)
 merged
 
-# %%
-
 # %% [markdown]
 # # Output
 
@@ -327,8 +282,6 @@ output_filename = "../_data/drug_candidates.tsv"
 # %%
 merged.to_csv(output_filename, sep="\t",index=False)
 
-# %%
-
 # %% [markdown]
 # # Analysis
 
@@ -338,7 +291,5 @@ dict(redo.groupby('Drugs').Drugs.count().sort_values(ascending=False))
 
 # %%
 print("\n".join(redo.Type.unique()))
-
-# %%
 
 # %%
