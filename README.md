@@ -1,5 +1,7 @@
 # Drug Candidates for SARS-CoV-2
 
+*This repository is no longer maintained as of 2021.*
+
 This repo hosts a work-in-progress list of drug candidates for SARS-CoV-2
 (COVID-19). Most information comes from literature reviews and preprints.
 

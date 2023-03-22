@@ -4,6 +4,8 @@ datatable:
     pageLength: 25
 ---
 
+<span style="color:red">This site is no longer maintained as of 2021.</span>
+
 This list includes drugs that may bind or otherwise interact with SARS-CoV-2.
 It has been compiled from literature by members of the Paul Scherrer Institute.
 For more information, contact [Xavier Deupi](mailto:xavier.deupi@psi.ch).
